@@ -20,7 +20,9 @@ load_dotenv()
 def get_gemini_embedder():
     return GoogleGenerativeAIEmbeddings(
         model="models/embedding-001",
-        google_api_key=os.getenv("GOOGLE_API_KEY")
+        #google_api_key=os.getenv("GOOGLE_API_KEY")
+
+        google_api_key=st.secrets("GOOGLE_API_KEY")
     )
 
 def embed_and_store(raw_text: str, file_id: str) -> None:
