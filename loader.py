@@ -22,4 +22,23 @@ def load_pdf_from_drive(file_id):
 
     # Check cache
     cached_path = os.path.join(CACHE_DIR, f"{file_id}.pdf")
-    if os.path.exi
+    if os.path.exists(cached_path):
+        with open(cached_path, "rb") as f:
+            reader = PyPDF2.PdfReader(f)
+            return "".join(page.extract_text() or "" for page in reader.pages)
+
+    # Download if not cached
+    request = service.files().get_media(fileId=file_id)
+    fh = io.BytesIO()
+    downloader = MediaIoBaseDownload(fh, request)
+
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+
+    with open(cached_path, "wb") as out_file:
+        out_file.write(fh.getbuffer())
+
+    fh.seek(0)
+    reader = PyPDF2.PdfReader(fh)
+    return "".join(page.extract_text() or "" for page in reader.pages)
