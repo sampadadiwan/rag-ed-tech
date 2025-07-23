@@ -1,28 +1,25 @@
 import io
+import os
+import PyPDF2
+import streamlit as st
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
-import PyPDF2
+
+CACHE_DIR = "./pdf_cache"
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 def load_pdf_from_drive(file_id):
     SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
-    SERVICE_ACCOUNT_FILE = 'credentials.json'
 
-    creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    # ✅ Load credentials from Streamlit secrets
+    service_account_info = st.secrets["gdrive"]
+    creds = service_account.Credentials.from_service_account_info(
+        service_account_info, scopes=SCOPES
+    )
+
     service = build('drive', 'v3', credentials=creds)
 
-    request = service.files().get_media(fileId=file_id)
-    fh = io.BytesIO()
-    downloader = MediaIoBaseDownload(fh, request)
-
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
-
-    fh.seek(0)
-    reader = PyPDF2.PdfReader(fh)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    return text
+    # Check cache
+    cached_path = os.path.join(CACHE_DIR, f"{file_id}.pdf")
+    if os.path.exi
