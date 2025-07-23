@@ -6,6 +6,7 @@ from vectorstore import get_vectorstore, store_documents
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
+import streamlit as st
 
 # Fix for Streamlit's threading model on Windows + Gemini async issue
 if sys.platform.startswith('win'):
