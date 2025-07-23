@@ -1,0 +1,13 @@
+streamlit
+langgraph
+langchain
+chromadb
+PyPDF2
+google-auth
+google-auth-oauthlib
+google-api-python-client
+openai
+tavily-python
+langgraph
+langchain_google_genai
+langchain-community
